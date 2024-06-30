@@ -51,7 +51,7 @@ public class PlayerBehaviour : MonoBehaviour
         {
             foreach (GameObject collisionObj in activeCollisions)
             {
-                if (collisionObj.transform.position.x == transform.position.x &&
+                if (collisionObj.transform.position.x == Mathf.Round(transform.position.x) &&
                     collisionObj.transform.position.y == Mathf.Round(transform.position.y) - 1)
                 {
                     Destroy(collisionObj);
@@ -122,6 +122,11 @@ public class PlayerBehaviour : MonoBehaviour
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
+        if (collision.gameObject.CompareTag("Prize"))
+        {
+            return;
+        }
+
         activeCollisions.Add(collision.gameObject);
         if (isFalling)
         {
