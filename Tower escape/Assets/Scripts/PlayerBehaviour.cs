@@ -1,3 +1,5 @@
+using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class PlayerBehaviour : MonoBehaviour
@@ -12,13 +14,14 @@ public class PlayerBehaviour : MonoBehaviour
     public float fixedTravelTime;
     private Vector3 targetPosition, velocity;
     private Directions direction;
-    private bool isMoving, hasQueuedMove;
+    private bool isMoving, hasQueuedMove, isFalling;
+    List<GameObject> activeCollisions = new List<GameObject>();
 
     void Start()
     {
         direction = Directions.None;
-        isMoving = false;
-        hasQueuedMove = false;
+        isMoving = hasQueuedMove = false;
+        isFalling = true;
     }
 
     void Update()
@@ -44,13 +47,17 @@ public class PlayerBehaviour : MonoBehaviour
             //    gameObject.GetComponent<SpriteRenderer>().flipX = false;
             //}
         }
-        else if (Input.GetKeyDown(KeyCode.UpArrow))
-        {
-
-        }
         else if (Input.GetKeyDown(KeyCode.DownArrow))
         {
-
+            foreach (GameObject collisionObj in activeCollisions)
+            {
+                if (collisionObj.transform.position.x == transform.position.x &&
+                    collisionObj.transform.position.y == Mathf.Round(transform.position.y) - 1)
+                {
+                    Destroy(collisionObj);
+                    break;
+                }
+            }
         }
 
         transform.position += velocity * Time.deltaTime * Time.timeScale;
@@ -59,6 +66,10 @@ public class PlayerBehaviour : MonoBehaviour
             (direction == Directions.Right && targetPosition.x <= transform.position.x))
         {
             StopMoving();
+        }
+        if (!isFalling && isMoving && transform.position.y < MathF.Round(transform.position.y))
+        {
+            transform.position = new Vector3(transform.position.x, MathF.Round(transform.position.y), transform.position.z);
         }
     }
 
@@ -102,37 +113,40 @@ public class PlayerBehaviour : MonoBehaviour
         isMoving = true;
     }
 
-    void MoveVertically(float value)
-    {
-
-    }
-
     void StopMoving()
     {
-        velocity = Vector3.zero;
-        targetPosition = Vector3.zero;
-        isMoving = false;
-        hasQueuedMove = false;
+        velocity = targetPosition = Vector3.zero;
+        isMoving = hasQueuedMove = hasQueuedMove = false;
         direction = Directions.None;
     }
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        if (!isMoving)
+        activeCollisions.Add(collision.gameObject);
+        if (isFalling)
         {
-            float deltaY = Mathf.Round(transform.position.y) - transform.position.y;
-            MoveVertically(deltaY);
+            isFalling = false;
         }
 
         if (collision.gameObject.CompareTag("Wall") && isMoving)
         {
             StopMoving();
         }
-        else if (collision.gameObject.CompareTag("Block")
+        else if ((collision.gameObject.CompareTag("Block") || collision.gameObject.CompareTag("GravelBlock"))
             && Mathf.Round(collision.gameObject.transform.position.y) == Mathf.Round(targetPosition.y)
             && isMoving)
         {
             Destroy(collision.gameObject);
+        }
+    }
+
+    private void OnCollisionExit2D(Collision2D collision)
+    {
+        activeCollisions.Remove(collision.gameObject);
+
+        if (collision.gameObject.CompareTag("GravelBlock") && activeCollisions.Count == 0)
+        {
+            isFalling = true;
         }
     }
 }
