@@ -14,38 +14,38 @@ public class PlayerBehaviour : MonoBehaviour
     public float fixedTravelTime;
     private Vector3 targetPosition, velocity;
     private Directions direction;
-    private bool isMoving, hasQueuedMove, isFalling;
+    private bool isMoving, hasQueuedMove, isFalling, isRight;
     List<GameObject> activeCollisions = new List<GameObject>();
+    private Animator animator;
 
     void Start()
     {
         direction = Directions.None;
         isMoving = hasQueuedMove = false;
-        isFalling = true;
+        isFalling = isRight = true;
+        animator = GetComponent<Animator>();
     }
 
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.LeftArrow))
+        if (Input.GetKeyDown(KeyCode.LeftArrow) && !isFalling)
         {
             MoveHorizontally(Directions.Left);
-            
-            //if (isRight)
-            //{
-            //    isRight = false;
-            //    isLeft = true;
-            //    gameObject.GetComponent<SpriteRenderer>().flipX = true;
-            //}
+
+            if (isRight)
+            {
+                isRight = false;
+                gameObject.GetComponent<SpriteRenderer>().flipX = true;
+            }
         }
-        else if (Input.GetKeyDown(KeyCode.RightArrow))
+        else if (Input.GetKeyDown(KeyCode.RightArrow) && !isFalling)
         {
             MoveHorizontally(Directions.Right);
-            //if (isLeft)
-            //{
-            //    isRight = true;
-            //    isLeft = false;
-            //    gameObject.GetComponent<SpriteRenderer>().flipX = false;
-            //}
+            if (!isRight)
+            {
+                isRight = true;
+                gameObject.GetComponent<SpriteRenderer>().flipX = false;
+            }
         }
         else if (Input.GetKeyDown(KeyCode.DownArrow))
         {
@@ -111,12 +111,14 @@ public class PlayerBehaviour : MonoBehaviour
         velocity = new Vector3(xVelocity, currentPosition.y, currentPosition.z);
         velocity /= fixedTravelTime;
         isMoving = true;
+        animator.SetBool("isMoving", isMoving);
     }
 
     void StopMoving()
     {
         velocity = targetPosition = Vector3.zero;
         isMoving = hasQueuedMove = hasQueuedMove = false;
+        animator.SetBool("isMoving", isMoving);
         direction = Directions.None;
     }
 

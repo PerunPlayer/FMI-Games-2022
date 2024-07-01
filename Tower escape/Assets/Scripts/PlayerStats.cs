@@ -3,11 +3,13 @@ using UnityEngine;
 public class PlayerStats : MonoBehaviour
 {
     private int depth, prizes;
+    public PrizesBar prizesBar;
 
     void Start()
     {
         depth = 0;
         prizes = 0;
+        prizesBar.SetCollectedPrizes(prizes);
     }
 
     void Update()
@@ -19,8 +21,14 @@ public class PlayerStats : MonoBehaviour
     {
         if (collision.gameObject.CompareTag("Prize"))
         {
-            prizes++;
+            CollectPrize();
             Destroy(collision.gameObject);
         }
+    }
+
+    void CollectPrize() // so I can add different amount of prizes at once later
+    {
+        prizes++;
+        prizesBar.SetCollectedPrizes(prizes);
     }
 }
