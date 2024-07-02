@@ -49,6 +49,7 @@ public class PlayerBehaviour : MonoBehaviour
         }
         else if (Input.GetKeyDown(KeyCode.DownArrow))
         {
+            animator.SetBool("isDigging", true);
             foreach (GameObject collisionObj in activeCollisions)
             {
                 if (collisionObj.transform.position.x == Mathf.Round(transform.position.x) &&
@@ -58,6 +59,10 @@ public class PlayerBehaviour : MonoBehaviour
                     break;
                 }
             }
+        }
+        else if (Input.GetKeyUp(KeyCode.DownArrow))
+        {
+            animator.SetBool("isDigging", false);
         }
 
         transform.position += velocity * Time.deltaTime * Time.timeScale;
