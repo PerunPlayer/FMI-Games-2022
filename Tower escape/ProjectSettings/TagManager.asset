@@ -8,6 +8,7 @@ TagManager:
   - Block
   - GravelBlock
   - Prize
+  - Trap
   layers:
   - Default
   - TransparentFX

@@ -113,7 +113,7 @@ public class PlayerBehaviour : MonoBehaviour
         targetPosition = currentPosition;
         targetPosition.x = Mathf.Round(targetPosition.x);
         targetPosition.x += xVelocity;
-        velocity = new Vector3(xVelocity, currentPosition.y, currentPosition.z);
+        velocity = new Vector3(xVelocity, 0, 0);
         velocity /= fixedTravelTime;
         isMoving = true;
         animator.SetBool("isMoving", isMoving);
@@ -132,6 +132,11 @@ public class PlayerBehaviour : MonoBehaviour
         if (collision.gameObject.CompareTag("Prize"))
         {
             return;
+        }
+        else if (collision.gameObject.CompareTag("Trap"))
+        {
+            //game over
+            //open menu
         }
 
         activeCollisions.Add(collision.gameObject);

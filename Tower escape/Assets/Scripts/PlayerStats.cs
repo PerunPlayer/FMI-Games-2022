@@ -3,13 +3,21 @@ using UnityEngine;
 public class PlayerStats : MonoBehaviour
 {
     private int depth, prizes;
-    public PrizesBar prizesBar;
+    public GameObject prizesBar;
 
     void Start()
     {
         depth = 0;
         prizes = 0;
-        prizesBar.SetCollectedPrizes(prizes);
+        prizesBar = null;
+    }
+
+    private void LateUpdate()
+    {
+        if (prizesBar == null)
+        {
+            prizesBar = GameObject.Find("PrizesBar");
+        }
     }
 
     void Update()
@@ -29,6 +37,10 @@ public class PlayerStats : MonoBehaviour
     void CollectPrize() // so I can add different amount of prizes at once later
     {
         prizes++;
-        prizesBar.SetCollectedPrizes(prizes);
+        if (prizesBar == null)
+        {
+            Debug.Log("null prizes bar");
+        }
+        prizesBar.GetComponent<HUD>().SetCollectedPrizes(prizes);
     }
 }

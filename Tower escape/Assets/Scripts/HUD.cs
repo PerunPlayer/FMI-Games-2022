@@ -1,7 +1,7 @@
 using UnityEngine;
 using TMPro;
 
-public class PrizesBar : MonoBehaviour
+public class HUD : MonoBehaviour
 {
     public TextMeshProUGUI textField;
 
