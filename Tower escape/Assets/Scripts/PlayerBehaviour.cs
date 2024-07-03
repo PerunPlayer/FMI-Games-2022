@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class PlayerBehaviour : MonoBehaviour
 {
@@ -14,21 +15,23 @@ public class PlayerBehaviour : MonoBehaviour
     public float fixedTravelTime;
     private Vector3 targetPosition, velocity;
     private Directions direction;
-    private bool isMoving, hasQueuedMove, isFalling, isRight;
+    private bool isMoving, hasQueuedMove, isFalling, isRight, isPaused, tryPause;
     List<GameObject> activeCollisions = new List<GameObject>();
     private Animator animator;
+    private GameObject pauseMenu;
 
     void Start()
     {
         direction = Directions.None;
-        isMoving = hasQueuedMove = false;
+        isMoving = hasQueuedMove = isPaused = tryPause = false;
         isFalling = isRight = true;
         animator = GetComponent<Animator>();
+        pauseMenu = null;
     }
 
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.LeftArrow) && !isFalling)
+        if (Input.GetKeyDown(KeyCode.LeftArrow) && !isFalling && !isPaused)
         {
             MoveHorizontally(Directions.Left);
 
@@ -38,7 +41,7 @@ public class PlayerBehaviour : MonoBehaviour
                 gameObject.GetComponent<SpriteRenderer>().flipX = true;
             }
         }
-        else if (Input.GetKeyDown(KeyCode.RightArrow) && !isFalling)
+        else if (Input.GetKeyDown(KeyCode.RightArrow) && !isFalling && !isPaused)
         {
             MoveHorizontally(Directions.Right);
             if (!isRight)
@@ -47,7 +50,7 @@ public class PlayerBehaviour : MonoBehaviour
                 gameObject.GetComponent<SpriteRenderer>().flipX = false;
             }
         }
-        else if (Input.GetKeyDown(KeyCode.DownArrow))
+        else if (Input.GetKeyDown(KeyCode.DownArrow) && !isPaused)
         {
             animator.SetBool("isDigging", true);
             foreach (GameObject collisionObj in activeCollisions)
@@ -60,9 +63,13 @@ public class PlayerBehaviour : MonoBehaviour
                 }
             }
         }
-        else if (Input.GetKeyUp(KeyCode.DownArrow))
+        else if (Input.GetKeyUp(KeyCode.DownArrow) && !isPaused)
         {
             animator.SetBool("isDigging", false);
+        }
+        else if (!isPaused && (Input.GetKeyDown(KeyCode.Escape) || tryPause))
+        {
+            PauseGame(!tryPause);
         }
 
         transform.position += velocity * Time.deltaTime * Time.timeScale;
@@ -165,5 +172,32 @@ public class PlayerBehaviour : MonoBehaviour
         {
             isFalling = true;
         }
+    }
+
+    void PauseGame(bool isFirstTry)
+    {
+        if (isFirstTry)
+        {
+            SceneManager.LoadScene("PauseMenu", LoadSceneMode.Additive);
+        }
+
+        tryPause = true;
+        pauseMenu = GameObject.Find("Canvas");
+        
+        if (pauseMenu == null)
+        {
+            Debug.Log("null pause menu");
+        }
+        else
+        {
+            isPaused = true;
+            tryPause = false;
+        }
+    }
+
+    public void UnpauseGame()
+    {
+        isPaused = tryPause = false;
+        SceneManager.UnloadSceneAsync("PauseMenu");
     }
 }

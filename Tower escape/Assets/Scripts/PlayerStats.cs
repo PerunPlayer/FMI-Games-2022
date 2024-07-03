@@ -3,7 +3,7 @@ using UnityEngine;
 public class PlayerStats : MonoBehaviour
 {
     private int depth, prizes;
-    public GameObject prizesBar;
+    private GameObject prizesBar;
 
     void Start()
     {
