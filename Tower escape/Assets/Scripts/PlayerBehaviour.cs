@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -142,8 +143,12 @@ public class PlayerBehaviour : MonoBehaviour
         }
         else if (collision.gameObject.CompareTag("Trap"))
         {
-            //game over
-            //open menu
+            if (isMoving)
+            {
+                StopMoving();
+            }
+
+            StartCoroutine(Die(2f));
         }
 
         activeCollisions.Add(collision.gameObject);
@@ -152,9 +157,17 @@ public class PlayerBehaviour : MonoBehaviour
             isFalling = false;
         }
 
-        if (collision.gameObject.CompareTag("Wall") && isMoving)
+        if (collision.gameObject.CompareTag("Wall"))
         {
-            StopMoving();
+            if (isMoving)
+            {
+                StopMoving();
+            }
+            
+            if (MathF.Round(transform.position.y) == 1)
+            {
+                SceneManager.LoadScene("Level2", LoadSceneMode.Single);
+            }
         }
         else if ((collision.gameObject.CompareTag("Block") || collision.gameObject.CompareTag("GravelBlock"))
             && Mathf.Round(collision.gameObject.transform.position.y) == Mathf.Round(targetPosition.y)
@@ -195,9 +208,17 @@ public class PlayerBehaviour : MonoBehaviour
         }
     }
 
-    public void UnpauseGame()
+    public void ResumeGame()
     {
         isPaused = tryPause = false;
         SceneManager.UnloadSceneAsync("PauseMenu");
+    }
+
+    IEnumerator Die(float time)
+    {
+        isPaused = true;
+        Camera.main.GetComponent<GoldenShader>().enabled = true;
+        yield return new WaitForSeconds(time);
+        SceneManager.LoadScene("MainMenu", LoadSceneMode.Single);
     }
 }

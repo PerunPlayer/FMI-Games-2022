@@ -26,7 +26,7 @@ public class PauseMenu : MonoBehaviour
 
     public void Resume()
     {
-        playerBehaviour.UnpauseGame();
+        playerBehaviour.ResumeGame();
     }
 
     public void OpenMainMenu()
