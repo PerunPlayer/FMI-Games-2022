@@ -1,8 +1,8 @@
 Here are 2 games that are made with Unity engine
 
-#Pink platformer
+# Pink platformer
 
-###Description:
+### Description:
 
 Pink Platformer is an engaging and vibrant platformer game inspired by the popular Doodle Jump. Players must navigate a series of platforms, jumping higher and higher to avoid obstacles and collect points. The charming pink aesthetic and fluid gameplay create an addictive experience that will challenge your reflexes and keep you entertained for hours.
 
@@ -12,9 +12,9 @@ Pink Platformer is an engaging and vibrant platformer game inspired by the popul
 - HUD and menu
 - different scenes
 
-#Tower escape
+# Tower escape
 
-###Description:
+### Description:
 
 Tower Escape is an exciting game inspired by "Once Upon a Tower" Players take on the role of a hero trapped in a tower, who must navigate through various floors filled with enemies and obstacles to escape. The game features strategic combat, challenging puzzles, and a gripping storyline that will immerse you in the quest for freedom. Use your wits and skills to conquer the tower and secure your escape.
 
